@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import ProjectDetail from './pages/ProjectDetail'
 import Projects from './pages/Projects'
 import Settings from './pages/Settings'
+import RecycleBin from './pages/RecycleBin'
 import PrivateRoute from './components/PrivateRoute'
 import Layout from './components/Layout'
 
@@ -47,6 +48,16 @@ const App = () => (
           <PrivateRoute>
             <Layout>
               <Settings />
+            </Layout>
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/trash" 
+        element={
+          <PrivateRoute>
+            <Layout>
+              <RecycleBin />
             </Layout>
           </PrivateRoute>
         } 

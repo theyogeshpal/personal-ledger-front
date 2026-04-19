@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { BarChart3, Briefcase, Settings as SettingsIcon, LogOut, Package, X } from 'lucide-react'
+import { BarChart3, Briefcase, Settings as SettingsIcon, LogOut, Package, X, Trash2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const Sidebar = ({ onClose }) => {
@@ -10,6 +10,7 @@ const Sidebar = ({ onClose }) => {
   const menuItems = [
     { label: 'Dashboard', icon: <BarChart3 size={18} />, path: '/dashboard' },
     { label: 'Projects', icon: <Briefcase size={18} />, path: '/projects' },
+    { label: 'Recycle Bin', icon: <Trash2 size={18} />, path: '/trash' },
     { label: 'Settings', icon: <SettingsIcon size={18} />, path: '/settings' },
   ]
 
