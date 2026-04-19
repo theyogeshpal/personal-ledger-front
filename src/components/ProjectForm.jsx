@@ -127,7 +127,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
                 value={repo.label}
                 onChange={e => setRepo(i, 'label', e.target.value)}
                 placeholder="Label"
-                className={`${inputClass} w-[40%]`}
+                className={`${inputClass} flex-1`}
               />
               <input
                 value={repo.url}
@@ -162,7 +162,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
                 value={link.label}
                 onChange={e => setLink(i, 'label', e.target.value)}
                 placeholder="Label"
-                className={`${inputClass} w-[40%]`}
+                className={`${inputClass} flex-1`}
               />
               <input
                 value={link.url}
