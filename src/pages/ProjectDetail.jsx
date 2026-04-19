@@ -206,35 +206,44 @@ const ProjectDetail = () => {
           )}
 
           {/* Links */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="card p-5 flex items-center gap-4 hover:border-blue-200 transition-colors group">
-              <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-100 flex-shrink-0">
-                <Code size={18} />
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">GitHub</p>
-                {project.githubUrl ? (
-                  <a href={project.githubUrl} target="_blank" rel="noreferrer" className="text-sm font-black text-slate-900 flex items-center gap-1.5 hover:text-blue-600 truncate">
-                    Repository <ExternalLink size={13} />
-                  </a>
-                ) : <span className="text-slate-300 text-sm font-bold">Not linked</span>}
-              </div>
+          {(project.repos?.length > 0 || project.liveLinks?.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Repos */}
+              {project.repos?.filter(r => r.url).map((repo, i) => (
+                <div key={i} className="card p-5 flex items-center gap-4 hover:border-indigo-200 transition-colors">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-100 flex-shrink-0">
+                    <Code size={18} />
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{repo.label || `Repo ${i + 1}`}</p>
+                    <a href={repo.url} target="_blank" rel="noreferrer" className="text-sm font-black text-slate-900 flex items-center gap-1.5 hover:text-indigo-600 truncate">
+                      View Repository <ExternalLink size={13} />
+                    </a>
+                  </div>
+                </div>
+              ))}
+              {/* Live Links */}
+              {project.liveLinks?.filter(l => l.url).map((link, i) => (
+                <div key={i} className="card p-5 flex items-center gap-4 hover:border-emerald-200 transition-colors">
+                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-100 flex-shrink-0">
+                    <Globe size={18} />
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{link.label || `Live URL ${i + 1}`}</p>
+                    <a href={link.url} target="_blank" rel="noreferrer" className="text-sm font-black text-slate-900 flex items-center gap-1.5 hover:text-emerald-600 truncate">
+                      Open Link <ExternalLink size={13} />
+                    </a>
+                  </div>
+                </div>
+              ))}
+              {/* Fallback if no repos/links */}
+              {!project.repos?.some(r => r.url) && !project.liveLinks?.some(l => l.url) && (
+                <div className="col-span-2 text-center py-8 text-slate-300 text-sm font-bold border-2 border-dashed border-slate-100 rounded-xl">
+                  No links added yet.
+                </div>
+              )}
             </div>
-
-            <div className="card p-5 flex items-center gap-4 hover:border-emerald-200 transition-colors group">
-              <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-100 flex-shrink-0">
-                <Globe size={18} />
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live URL</p>
-                {project.frontendUrl ? (
-                  <a href={project.frontendUrl} target="_blank" rel="noreferrer" className="text-sm font-black text-slate-900 flex items-center gap-1.5 hover:text-emerald-600 truncate">
-                    Live Site <ExternalLink size={13} />
-                  </a>
-                ) : <span className="text-slate-300 text-sm font-bold">Not deployed</span>}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
