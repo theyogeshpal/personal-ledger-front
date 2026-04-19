@@ -28,9 +28,7 @@ const Login = () => {
     <div className="flex justify-center items-center min-h-screen bg-slate-50 p-5 font-sans">
       <div className="bg-white p-16 rounded-[40px] w-full max-w-[500px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center">
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner">
-            <Sparkles size={40} className="text-blue-600" />
-          </div>
+          
           <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Welcome Back</h2>
           <p className="text-slate-500 font-medium leading-relaxed">Log in to manage your professional projects and track your progress.</p>
         </div>
