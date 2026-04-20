@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronLeft, Edit3, Code, Calendar, CheckCircle2, Globe,
-  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase, Laptop
+  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase, Laptop, KeyRound, Eye, EyeOff
 } from 'lucide-react'
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
@@ -32,6 +32,9 @@ const ProjectDetail = () => {
   const [newStatus, setNewStatus] = useState('active')
   const [note, setNote] = useState('')
   const [updating, setUpdating] = useState(false)
+  const [revealedPasswords, setRevealedPasswords] = useState({})
+
+  const togglePassword = (i) => setRevealedPasswords(prev => ({ ...prev, [i]: !prev[i] }))
 
   const fetchProject = async () => {
     try {
@@ -247,10 +250,42 @@ const ProjectDetail = () => {
               )}
             </div>
           )}
+          {/* Credentials */}
+          {project.credentials?.filter(c => c.username || c.password).length > 0 && (
+            <div className="card p-5">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <KeyRound size={12} className="text-amber-500" /> Credentials
+              </h3>
+              <div className="flex flex-col gap-3">
+                {project.credentials.filter(c => c.username || c.password).map((cred, i) => (
+                  <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-100 px-2 py-1 rounded-lg uppercase tracking-wider flex-shrink-0">
+                      {cred.label || `Credential ${i + 1}`}
+                    </span>
+                    <div className="flex flex-1 gap-6 flex-wrap">
+                      <div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Username</p>
+                        <p className="text-sm font-bold text-slate-700">{cred.username || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Password</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-slate-700 font-mono">
+                            {revealedPasswords[i] ? cred.password : '••••••••'}
+                          </p>
+                          <button onClick={() => togglePassword(i)} className="text-slate-400 hover:text-slate-700 transition-colors">
+                            {revealedPasswords[i] ? <EyeOff size={14} /> : <Eye size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
-
-      {activeTab === 'progress' && (
+      )} (
         <div className="animate-slide-up [animation-delay:100ms]">
           <div className="card p-6 md:p-8">
             <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">

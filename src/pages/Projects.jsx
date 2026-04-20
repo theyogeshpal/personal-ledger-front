@@ -42,6 +42,8 @@ const Projects = () => {
   const [showModal, setShowModal] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [error, setError] = useState('')
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 10
 
   const fetchProjects = async () => {
     try {
@@ -89,6 +91,12 @@ const Projects = () => {
     (categoryFilter === '' || p.category === categoryFilter)
   )
 
+  const totalPages = Math.ceil(filteredProjects.length / PAGE_SIZE)
+  const paginatedProjects = filteredProjects.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const handleFilterChange = (setter) => (val) => { setter(val); setPage(1) }
+  const handleSearchChange = (val) => { setSearch(val); setPage(1) }
+
   return (
     <div className="animate-fade-in pb-10">
       {/* Header */}
@@ -132,16 +140,16 @@ const Projects = () => {
           <input
             placeholder="Search projects..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="border-none bg-transparent w-full outline-none text-slate-900 font-bold placeholder:text-slate-300 text-sm"
           />
         </div>
         <div className="flex gap-3">
           <div className="flex-1 sm:flex-none sm:w-40">
-            <CustomSelect value={filter} onChange={setFilter} options={filterOptions} />
+            <CustomSelect value={filter} onChange={handleFilterChange(setFilter)} options={filterOptions} />
           </div>
           <div className="flex-1 sm:flex-none sm:w-40">
-            <CustomSelect value={categoryFilter} onChange={setCategoryFilter} options={categoryFilterOptions} />
+            <CustomSelect value={categoryFilter} onChange={handleFilterChange(setCategoryFilter)} options={categoryFilterOptions} />
           </div>
         </div>
       </div>
@@ -183,7 +191,7 @@ const Projects = () => {
                 </td>
               </tr>
             ) : (
-              filteredProjects.map(p => (
+              paginatedProjects.map(p => (
                 <tr key={p._id} className="group hover:bg-slate-50/70 transition-colors">
                   <td className="px-6 py-4">
                     <span
@@ -250,6 +258,44 @@ const Projects = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4">
+          <p className="text-xs font-bold text-slate-400">
+            Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredProjects.length)} of {filteredProjects.length}
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 text-xs font-black text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`w-8 h-8 text-xs font-black rounded-lg transition-all ${
+                  page === p
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1.5 text-xs font-black text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

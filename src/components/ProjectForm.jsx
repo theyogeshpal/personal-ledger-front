@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop } from 'lucide-react'
+import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop, KeyRound } from 'lucide-react'
 
 const empty = {
   title: '', description: '', category: 'personal', status: 'active', progress: 0,
   repos: [{ label: '', url: '' }],
   liveLinks: [{ label: '', url: '' }],
+  credentials: [],
   tags: '', startDate: '', endDate: ''
 }
 
@@ -26,6 +27,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
         category: initial.category || 'personal',
         repos: initial.repos?.length ? initial.repos : [{ label: '', url: '' }],
         liveLinks: initial.liveLinks?.length ? initial.liveLinks : [{ label: '', url: '' }],
+        credentials: initial.credentials || [],
       })
     } else {
       setForm(empty)
@@ -42,6 +44,10 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
   const addLink = () => set('liveLinks', [...form.liveLinks, { label: '', url: '' }])
   const removeLink = (i) => set('liveLinks', form.liveLinks.filter((_, idx) => idx !== i))
 
+  const setCred = (i, key, val) => set('credentials', form.credentials.map((c, idx) => idx === i ? { ...c, [key]: val } : c))
+  const addCred = () => set('credentials', [...form.credentials, { label: '', username: '', password: '' }])
+  const removeCred = (i) => set('credentials', form.credentials.filter((_, idx) => idx !== i))
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit({
@@ -49,6 +55,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
       tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
       repos: form.repos.filter(r => r.url.trim()),
       liveLinks: form.liveLinks.filter(l => l.url.trim()),
+      credentials: form.credentials.filter(c => c.username.trim() || c.password.trim()),
     })
   }
 
@@ -65,17 +72,14 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
       {/* Basic Info */}
       <div className={sectionClass}>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Basic Info</p>
-
         <div>
           <label className={labelClass}><AlignLeft size={12} className="text-blue-500" /> Title *</label>
           <input value={form.title} onChange={e => set('title', e.target.value)} required placeholder="e.g. Personal Portfolio" className={inputClass} />
         </div>
-
         <div>
           <label className={labelClass}><AlignLeft size={12} className="text-slate-400" /> Description</label>
           <textarea rows={3} value={form.description} onChange={e => set('description', e.target.value)} placeholder="What is this project about?" className={`${inputClass} resize-none`} />
         </div>
-
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={labelClass}><Tag size={12} className="text-rose-400" /> Tags</label>
@@ -86,7 +90,6 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
             <input type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} className={inputClass} />
           </div>
         </div>
-
         {isCompleted && (
           <div>
             <label className={labelClass}><Calendar size={12} className="text-emerald-500" /> End Date</label>
@@ -127,18 +130,8 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
         <div className="flex flex-col gap-2">
           {form.repos.map((repo, i) => (
             <div key={i} className="flex gap-2 items-center">
-              <input
-                value={repo.label}
-                onChange={e => setRepo(i, 'label', e.target.value)}
-                placeholder="Label"
-                className={`${inputClass} flex-1`}
-              />
-              <input
-                value={repo.url}
-                onChange={e => setRepo(i, 'url', e.target.value)}
-                placeholder="https://github.com/..."
-                className={`${inputClass} flex-1`}
-              />
+              <input value={repo.label} onChange={e => setRepo(i, 'label', e.target.value)} placeholder="Label" className={`${inputClass} flex-1`} />
+              <input value={repo.url} onChange={e => setRepo(i, 'url', e.target.value)} placeholder="https://github.com/..." className={`${inputClass} flex-1`} />
               {form.repos.length > 1 && (
                 <button type="button" onClick={() => removeRepo(i)} className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all flex-shrink-0">
                   <Trash2 size={14} />
@@ -162,18 +155,8 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
         <div className="flex flex-col gap-2">
           {form.liveLinks.map((link, i) => (
             <div key={i} className="flex gap-2 items-center">
-              <input
-                value={link.label}
-                onChange={e => setLink(i, 'label', e.target.value)}
-                placeholder="Label"
-                className={`${inputClass} flex-1`}
-              />
-              <input
-                value={link.url}
-                onChange={e => setLink(i, 'url', e.target.value)}
-                placeholder="https://..."
-                className={`${inputClass} flex-1`}
-              />
+              <input value={link.label} onChange={e => setLink(i, 'label', e.target.value)} placeholder="Label" className={`${inputClass} flex-1`} />
+              <input value={link.url} onChange={e => setLink(i, 'url', e.target.value)} placeholder="https://..." className={`${inputClass} flex-1`} />
               {form.liveLinks.length > 1 && (
                 <button type="button" onClick={() => removeLink(i)} className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all flex-shrink-0">
                   <Trash2 size={14} />
@@ -182,6 +165,41 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Credentials (Optional) */}
+      <div className={sectionClass}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+              <KeyRound size={11} className="text-amber-500" /> Credentials
+              <span className="text-[9px] font-bold text-slate-300 normal-case tracking-normal">optional</span>
+            </p>
+          </div>
+          <button type="button" onClick={addCred} className="flex items-center gap-1 text-[11px] font-black text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg transition-all">
+            <Plus size={12} /> Add
+          </button>
+        </div>
+        {form.credentials.length === 0 ? (
+          <p className="text-xs text-slate-300 font-medium italic">No credentials added. Click Add to store login details for this project.</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {form.credentials.map((cred, i) => (
+              <div key={i} className="flex flex-col gap-2 p-3 bg-white border border-slate-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <input value={cred.label} onChange={e => setCred(i, 'label', e.target.value)} placeholder="Label (e.g. Admin Panel, DB)" className={`${inputClass} text-xs font-black`} />
+                  <button type="button" onClick={() => removeCred(i)} className="ml-2 p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all flex-shrink-0">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input value={cred.username} onChange={e => setCred(i, 'username', e.target.value)} placeholder="Username / Email" className={inputClass} />
+                  <input value={cred.password} onChange={e => setCred(i, 'password', e.target.value)} placeholder="Password" className={inputClass} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Actions */}
