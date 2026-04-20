@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Trash2, RotateCcw, AlertTriangle, Folder } from 'lucide-react'
 import api from '../api/axios'
+import { RecycleBinSkeleton } from '../components/Skeleton'
 
 const statusStyles = {
   active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -79,9 +80,7 @@ const RecycleBin = () => {
 
       {/* List */}
       {loading ? (
-        <div className="flex flex-col gap-3">
-          {[1, 2, 3].map(i => <div key={i} className="h-20 bg-slate-100 rounded-xl animate-pulse" />)}
-        </div>
+        <RecycleBinSkeleton />
       ) : projects.length === 0 ? (
         <div className="text-center py-20 border-2 border-dashed border-slate-100 rounded-xl bg-slate-50/50">
           <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm mx-auto mb-4">

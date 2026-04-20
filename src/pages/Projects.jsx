@@ -4,6 +4,7 @@ import { Folder, Plus, Search, Eye, Trash2, Briefcase, Edit, User, Laptop } from
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
 import CustomSelect from '../components/CustomSelect'
+import { ProjectsSkeleton } from '../components/Skeleton'
 
 const statusStyles = {
   active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -160,7 +161,7 @@ const Projects = () => {
           </thead>
           <tbody className="divide-y divide-slate-50">
             {loading ? (
-              <tr><td colSpan="5" className="py-20 text-center text-slate-400 text-sm font-bold">Loading...</td></tr>
+              <tr><td colSpan="6"><ProjectsSkeleton /></td></tr>
             ) : filteredProjects.length === 0 ? (
               <tr>
                 <td colSpan="5" className="py-20 text-center">

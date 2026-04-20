@@ -7,6 +7,7 @@ import {
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
 import CustomSelect from '../components/CustomSelect'
+import { ProjectDetailSkeleton } from '../components/Skeleton'
 
 const statusStyles = {
   active: 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -72,7 +73,7 @@ const ProjectDetail = () => {
   }
 
   if (error) return <div className="text-rose-500 text-center py-20 font-bold">{error}</div>
-  if (!project) return <div className="text-slate-400 text-center py-20 font-bold">Loading...</div>
+  if (!project) return <ProjectDetailSkeleton />
 
   const inputClass = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all font-bold text-slate-900 text-sm"
   const labelClass = "text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block"

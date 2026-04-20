@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Folder, Zap, CheckCircle, PauseCircle, Trash2, Plus, Eye, Activity, BarChart3, User, Briefcase } from 'lucide-react'
+import { DashboardSkeleton } from '../components/Skeleton'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 import api from '../api/axios'
 
@@ -102,6 +103,8 @@ const Dashboard = () => {
         <p className="text-slate-500 text-sm mt-1">Overview of your projects and progress.</p>
       </div>
 
+      {loading && <DashboardSkeleton />}
+      {!loading && <>
       {/* Stat Cards */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 animate-slide-up [animation-delay:50ms]">
         {statCards.map((s, i) => (
@@ -224,7 +227,7 @@ const Dashboard = () => {
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map(i => <div key={i} className="h-44 bg-slate-50 rounded-xl animate-pulse" />)}
+              {[1,2,3,4].map(i => <div key={i} className="h-44 bg-slate-200 rounded-xl animate-pulse" />)}
             </div>
           ) : projects.length === 0 ? (
             <div className="text-center py-16 border-2 border-dashed border-slate-100 rounded-xl bg-slate-50/50">
@@ -297,6 +300,8 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+    </>}
+  </div>
   )
 }
 
