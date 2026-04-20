@@ -161,7 +161,16 @@ const Projects = () => {
           </thead>
           <tbody className="divide-y divide-slate-50">
             {loading ? (
-              <tr><td colSpan="6"><ProjectsSkeleton /></td></tr>
+              [1,2,3,4,5].map(i => (
+                <tr key={i}>
+                  <td className="px-6 py-4"><div className="h-4 w-32 bg-slate-200 rounded animate-pulse mb-1.5" /><div className="h-3 w-48 bg-slate-100 rounded animate-pulse" /></td>
+                  <td className="px-6 py-4"><div className="h-6 w-20 bg-slate-200 rounded-lg animate-pulse" /></td>
+                  <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-200 rounded-lg animate-pulse" /></td>
+                  <td className="px-6 py-4"><div className="h-2 w-28 bg-slate-200 rounded-full animate-pulse" /></td>
+                  <td className="px-6 py-4"><div className="h-4 w-16 bg-slate-100 rounded animate-pulse" /></td>
+                  <td className="px-6 py-4"><div className="flex justify-end gap-1"><div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" /><div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" /><div className="w-8 h-8 bg-slate-200 rounded-lg animate-pulse" /></div></td>
+                </tr>
+              ))
             ) : filteredProjects.length === 0 ? (
               <tr>
                 <td colSpan="5" className="py-20 text-center">

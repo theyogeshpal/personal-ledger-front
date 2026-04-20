@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Folder, Zap, CheckCircle, PauseCircle, Trash2, Plus, Eye, Activity, BarChart3, User, Briefcase } from 'lucide-react'
-import { DashboardSkeleton } from '../components/Skeleton'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
+import { DashboardSkeleton } from '../components/Skeleton'
 import api from '../api/axios'
 
 const statusStyles = {
@@ -82,18 +82,23 @@ const Dashboard = () => {
     { name: 'On Hold', value: stats.onHoldProjects },
   ].filter(d => d.value > 0)
 
-  const personalCount = allProjects.filter(p => (p.category || 'personal') === 'personal').length
-  const officeCount = allProjects.filter(p => p.category === 'office').length
-  const categoryData = [
-    { name: 'Personal', value: personalCount },
-    { name: 'Office', value: officeCount },
-  ].filter(d => d.value > 0)
-
   const barData = allProjects.slice(0, 8).map(p => ({
     name: p.title.length > 14 ? p.title.slice(0, 14) + '…' : p.title,
     progress: p.progress,
     fill: p.status === 'completed' ? '#3b82f6' : p.status === 'on-hold' ? '#f59e0b' : '#10b981'
   }))
+
+  if (loading) {
+    return (
+      <div className="animate-fade-in space-y-6">
+        <div>
+          <div className="h-7 w-40 bg-slate-200 rounded-lg animate-pulse mb-2" />
+          <div className="h-4 w-64 bg-slate-200 rounded-lg animate-pulse" />
+        </div>
+        <DashboardSkeleton />
+      </div>
+    )
+  }
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -103,8 +108,6 @@ const Dashboard = () => {
         <p className="text-slate-500 text-sm mt-1">Overview of your projects and progress.</p>
       </div>
 
-      {loading && <DashboardSkeleton />}
-      {!loading && <>
       {/* Stat Cards */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 animate-slide-up [animation-delay:50ms]">
         {statCards.map((s, i) => (
@@ -121,7 +124,7 @@ const Dashboard = () => {
       </div>
 
       {/* Category Cards */}
-      {!loading && stats.totalProjects > 0 && (
+      {stats.totalProjects > 0 && (
         <div className="grid grid-cols-2 gap-4 animate-slide-up [animation-delay:80ms]">
           <div className="card p-5 flex items-center gap-4 border-l-4 border-l-violet-400">
             <div className="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 flex-shrink-0">
@@ -145,25 +148,15 @@ const Dashboard = () => {
       )}
 
       {/* Charts Row */}
-      {!loading && stats.totalProjects > 0 && (
+      {stats.totalProjects > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 animate-slide-up [animation-delay:100ms]">
-
-          {/* Donut Chart */}
           <div className="card p-6 md:col-span-2 flex flex-col">
             <h2 className="text-sm font-black text-slate-900 mb-1">Status Breakdown</h2>
             <p className="text-xs text-slate-400 mb-4">Distribution by project status</p>
             <div className="flex-1 flex items-center gap-4">
               <ResponsiveContainer width="100%" height={160}>
                 <PieChart>
-                  <Pie
-                    data={donutData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={70}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
+                  <Pie data={donutData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value">
                     {donutData.map((_, i) => (
                       <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} strokeWidth={0} />
                     ))}
@@ -183,7 +176,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Bar Chart */}
           <div className="card p-6 md:col-span-3 flex flex-col">
             <h2 className="text-sm font-black text-slate-900 mb-1">Project Progress</h2>
             <p className="text-xs text-slate-400 mb-4">Progress % across all projects</p>
@@ -194,9 +186,7 @@ const Dashboard = () => {
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
                 <Bar dataKey="progress" radius={[6, 6, 0, 0]}>
-                  {barData.map((entry, i) => (
-                    <Cell key={i} fill={entry.fill} />
-                  ))}
+                  {barData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -225,20 +215,14 @@ const Dashboard = () => {
             </div>
           )}
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1,2,3,4].map(i => <div key={i} className="h-44 bg-slate-200 rounded-xl animate-pulse" />)}
-            </div>
-          ) : projects.length === 0 ? (
+          {projects.length === 0 ? (
             <div className="text-center py-16 border-2 border-dashed border-slate-100 rounded-xl bg-slate-50/50">
               <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm mx-auto mb-4">
                 <Folder size={28} className="text-slate-300" />
               </div>
               <h3 className="text-base font-black text-slate-700 mb-1">No active projects</h3>
               <p className="text-slate-400 text-sm mb-5">Start a new project to see it here.</p>
-              <button onClick={() => navigate('/projects')} className="btn-ghost">
-                Create First Project
-              </button>
+              <button onClick={() => navigate('/projects')} className="btn-ghost">Create First Project</button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -262,31 +246,21 @@ const Dashboard = () => {
                       <Trash2 size={14} />
                     </button>
                   </div>
-
                   <h3 className="text-sm font-black text-slate-900 mb-1 group-hover:text-blue-600 transition-colors leading-snug">{p.title}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-4">
-                    {p.description || 'No description added.'}
-                  </p>
-
+                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-4">{p.description || 'No description added.'}</p>
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-[10px] font-bold text-slate-400">
                       <span>Progress</span>
                       <span>{p.progress}%</span>
                     </div>
                     <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 rounded-full transition-all duration-700"
-                        style={{ width: `${p.progress}%` }}
-                      />
+                      <div className="h-full bg-blue-500 rounded-full transition-all duration-700" style={{ width: `${p.progress}%` }} />
                     </div>
                   </div>
-
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-50">
                     <div className="flex gap-1">
                       {p.tags?.slice(0, 3).map(t => (
-                        <span key={t} className="bg-slate-50 border border-slate-100 text-slate-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase">
-                          {t}
-                        </span>
+                        <span key={t} className="bg-slate-50 border border-slate-100 text-slate-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase">{t}</span>
                       ))}
                     </div>
                     <span className="text-blue-500 text-[11px] font-black flex items-center gap-1 group-hover:gap-2 transition-all">
@@ -300,8 +274,6 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
-    </>}
-  </div>
   )
 }
 
