@@ -119,20 +119,18 @@ const RecycleBin = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-1">
+                    <div className="flex justify-end gap-2">
                       <button
                         onClick={() => handleRestore(p._id)}
-                        className="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all"
-                        title="Restore"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-lg text-xs font-black transition-all"
                       >
-                        <RotateCcw size={16} />
+                        <RotateCcw size={13} /> Restore
                       </button>
                       <button
                         onClick={() => handlePermanentDelete(p._id)}
-                        className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-all"
-                        title="Delete Permanently"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg text-xs font-black transition-all"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={13} /> Delete
                       </button>
                     </div>
                   </td>
