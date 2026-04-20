@@ -129,9 +129,7 @@ const ProjectDetail = () => {
               type="button"
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-black text-xs uppercase tracking-wider transition-all ${
-                activeTab === tab.key
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-600'
+                activeTab === tab.key ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               {tab.icon} {tab.label}
@@ -140,11 +138,10 @@ const ProjectDetail = () => {
         </div>
       </div>
 
-      {/* Tab Content */}
+      {/* Overview Tab */}
       {activeTab === 'details' && (
         <div className="flex flex-col gap-5 animate-slide-up [animation-delay:100ms]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Description */}
             <div className="md:col-span-2 card p-6">
               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <List size={12} /> Description
@@ -163,7 +160,6 @@ const ProjectDetail = () => {
               )}
             </div>
 
-            {/* Progress */}
             <div className="card p-6 h-fit">
               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Progress</h3>
               <div className="flex justify-between items-end mb-3">
@@ -179,7 +175,7 @@ const ProjectDetail = () => {
             </div>
           </div>
 
-          {/* Dates & Duration */}
+          {/* Timeline */}
           {(project.startDate || project.endDate) && (
             <div className="card p-5">
               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -212,9 +208,8 @@ const ProjectDetail = () => {
           )}
 
           {/* Links */}
-          {(project.repos?.length > 0 || project.liveLinks?.length > 0) && (
+          {(project.repos?.some(r => r.url) || project.liveLinks?.some(l => l.url)) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Repos */}
               {project.repos?.filter(r => r.url).map((repo, i) => (
                 <div key={i} className="card p-5 flex items-center gap-4 hover:border-indigo-200 transition-colors">
                   <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-100 flex-shrink-0">
@@ -228,7 +223,6 @@ const ProjectDetail = () => {
                   </div>
                 </div>
               ))}
-              {/* Live Links */}
               {project.liveLinks?.filter(l => l.url).map((link, i) => (
                 <div key={i} className="card p-5 flex items-center gap-4 hover:border-emerald-200 transition-colors">
                   <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-100 flex-shrink-0">
@@ -242,14 +236,9 @@ const ProjectDetail = () => {
                   </div>
                 </div>
               ))}
-              {/* Fallback if no repos/links */}
-              {!project.repos?.some(r => r.url) && !project.liveLinks?.some(l => l.url) && (
-                <div className="col-span-2 text-center py-8 text-slate-300 text-sm font-bold border-2 border-dashed border-slate-100 rounded-xl">
-                  No links added yet.
-                </div>
-              )}
             </div>
           )}
+
           {/* Credentials */}
           {project.credentials?.filter(c => c.username || c.password).length > 0 && (
             <div className="card p-5">
@@ -285,13 +274,15 @@ const ProjectDetail = () => {
             </div>
           )}
         </div>
-      )} (
+      )}
+
+      {/* Status Tab */}
+      {activeTab === 'progress' && (
         <div className="animate-slide-up [animation-delay:100ms]">
           <div className="card p-6 md:p-8">
             <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
               <Activity size={16} className="text-amber-500" /> Update Progress
             </h3>
-
             <form onSubmit={submitProgress} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div>
@@ -307,12 +298,10 @@ const ProjectDetail = () => {
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm">%</span>
                   </div>
                 </div>
-
                 <div>
                   <label className={labelClass}>Status</label>
                   <CustomSelect value={newStatus} onChange={setNewStatus} options={statusOptions} />
                 </div>
-
                 <div className="card p-4 flex flex-col items-center justify-center bg-slate-50 border-dashed">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">New Total</p>
                   <div className="flex items-center gap-2">
@@ -322,7 +311,6 @@ const ProjectDetail = () => {
                   </div>
                 </div>
               </div>
-
               <div>
                 <label className={labelClass}>Note</label>
                 <textarea
@@ -332,7 +320,6 @@ const ProjectDetail = () => {
                   className={`${inputClass} resize-none h-28`}
                 />
               </div>
-
               <div className="flex justify-end">
                 <button disabled={updating} className="btn-primary px-8">
                   <TrendingUp size={16} />
@@ -344,13 +331,13 @@ const ProjectDetail = () => {
         </div>
       )}
 
+      {/* History Tab */}
       {activeTab === 'history' && (
         <div className="animate-slide-up [animation-delay:100ms]">
           <div className="card p-6 md:p-8">
             <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
               <History size={16} className="text-blue-500" /> Progress History
             </h3>
-
             <div className="flex flex-col gap-3">
               {project.dailyUpdates?.length > 0 ? (
                 [...project.dailyUpdates].reverse().map((update, idx) => (
@@ -359,7 +346,6 @@ const ProjectDetail = () => {
                     <div className="absolute left-0 top-1 w-5 h-5 rounded-lg bg-white border-2 border-slate-200 flex items-center justify-center z-10 group-hover:border-blue-300 transition-colors">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     </div>
-
                     <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-sm hover:border-slate-200 transition-all">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-1.5">
                         <div className="flex items-center gap-2">
