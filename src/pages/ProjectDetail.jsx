@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronLeft, Edit3, Code, Calendar, CheckCircle2, Globe,
-  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase
+  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase, Laptop
 } from 'lucide-react'
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
@@ -102,9 +102,11 @@ const ProjectDetail = () => {
             <CheckCircle2 size={10} /> {project.status}
           </span>
           <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${
-            project.category === 'office' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-violet-50 text-violet-600 border-violet-100'
+            project.category === 'office' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+            project.category === 'freelance' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+            'bg-violet-50 text-violet-600 border-violet-100'
           }`}>
-            {project.category === 'office' ? <Briefcase size={10} /> : <User size={10} />}
+            {project.category === 'office' ? <Briefcase size={10} /> : project.category === 'freelance' ? <Laptop size={10} /> : <User size={10} />}
             {project.category || 'personal'}
           </span>
           <span className="text-slate-400 text-[11px] font-bold flex items-center gap-1.5">

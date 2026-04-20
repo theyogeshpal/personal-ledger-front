@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe } from 'lucide-react'
+import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop } from 'lucide-react'
 
 const empty = {
   title: '', description: '', category: 'personal', status: 'active', progress: 0,
@@ -98,7 +98,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
       {/* Category */}
       <div className={sectionClass}>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <button type="button" onClick={() => set('category', 'personal')}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-lg font-black text-sm border-2 transition-all ${form.category === 'personal' ? 'bg-violet-50 border-violet-400 text-violet-700' : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'}`}>
             <User size={14} /> Personal
@@ -106,6 +106,10 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
           <button type="button" onClick={() => set('category', 'office')}
             className={`flex items-center justify-center gap-2 py-2.5 rounded-lg font-black text-sm border-2 transition-all ${form.category === 'office' ? 'bg-blue-50 border-blue-400 text-blue-700' : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'}`}>
             <Briefcase size={14} /> Office
+          </button>
+          <button type="button" onClick={() => set('category', 'freelance')}
+            className={`flex items-center justify-center gap-2 py-2.5 rounded-lg font-black text-sm border-2 transition-all ${form.category === 'freelance' ? 'bg-orange-50 border-orange-400 text-orange-700' : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'}`}>
+            <Laptop size={14} /> Freelance
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Folder, Plus, Search, Eye, Trash2, Briefcase, Edit, User } from 'lucide-react'
+import { Folder, Plus, Search, Eye, Trash2, Briefcase, Edit, User, Laptop } from 'lucide-react'
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
 import CustomSelect from '../components/CustomSelect'
@@ -13,7 +13,8 @@ const statusStyles = {
 
 const categoryStyles = {
   personal: 'bg-violet-50 text-violet-600 border-violet-100',
-  office: 'bg-blue-50 text-blue-600 border-blue-100'
+  office: 'bg-blue-50 text-blue-600 border-blue-100',
+  freelance: 'bg-orange-50 text-orange-600 border-orange-100'
 }
 
 const filterOptions = [
@@ -26,7 +27,8 @@ const filterOptions = [
 const categoryFilterOptions = [
   { value: '', label: 'All Categories' },
   { value: 'personal', label: 'Personal' },
-  { value: 'office', label: 'Office' }
+  { value: 'office', label: 'Office' },
+  { value: 'freelance', label: 'Freelance' }
 ]
 
 const Projects = () => {
@@ -184,7 +186,7 @@ const Projects = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${categoryStyles[p.category] || categoryStyles.personal}`}>
-                      {p.category === 'office' ? <Briefcase size={10} /> : <User size={10} />}
+                      {p.category === 'office' ? <Briefcase size={10} /> : p.category === 'freelance' ? <Laptop size={10} /> : <User size={10} />}
                       {p.category || 'personal'}
                     </span>
                   </td>
