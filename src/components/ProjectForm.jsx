@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop, KeyRound } from 'lucide-react'
+import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop, KeyRound, DollarSign } from 'lucide-react'
 
 const empty = {
   title: '', description: '', category: 'personal', status: 'active', progress: 0,
   repos: [{ label: '', url: '' }],
   liveLinks: [{ label: '', url: '' }],
   credentials: [],
+  amount: 0,
+  paymentReceived: false,
   tags: '', startDate: '', endDate: ''
 }
 
@@ -28,6 +30,8 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
         repos: initial.repos?.length ? initial.repos : [{ label: '', url: '' }],
         liveLinks: initial.liveLinks?.length ? initial.liveLinks : [{ label: '', url: '' }],
         credentials: initial.credentials || [],
+        amount: initial.amount || 0,
+        paymentReceived: initial.paymentReceived || false,
       })
     } else {
       setForm(empty)
@@ -116,6 +120,45 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
           </button>
         </div>
       </div>
+
+      {/* Freelance Details */}
+      {form.category === 'freelance' && (
+        <div className={`${sectionClass} border-orange-100 bg-orange-50/50`}>
+          <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest flex items-center gap-1.5">
+            <DollarSign size={11} /> Freelance Details
+          </p>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className={`${labelClass} text-orange-500`}><DollarSign size={12} /> Project Amount (₹)</label>
+              <input
+                type="number"
+                min="0"
+                value={form.amount}
+                onChange={e => set('amount', e.target.value)}
+                placeholder="e.g. 5000"
+                className={inputClass}
+              />
+            </div>
+            <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg">
+              <div>
+                <p className="text-sm font-black text-slate-700">Payment Received</p>
+                <p className="text-xs text-slate-400">Toggle when payment is received</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => set('paymentReceived', !form.paymentReceived)}
+                className={`relative w-12 h-6 rounded-full transition-all duration-200 flex-shrink-0 ${
+                  form.paymentReceived ? 'bg-emerald-500' : 'bg-slate-200'
+                }`}
+              >
+                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all duration-200 ${
+                  form.paymentReceived ? 'left-7' : 'left-1'
+                }`} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Repositories */}
       <div className={sectionClass}>

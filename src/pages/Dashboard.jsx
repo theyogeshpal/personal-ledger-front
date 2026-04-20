@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Folder, Zap, CheckCircle, PauseCircle, Trash2, Plus, Eye, Activity, BarChart3, User, Briefcase } from 'lucide-react'
+import { Folder, Zap, CheckCircle, PauseCircle, Trash2, Plus, Eye, Activity, BarChart3, User, Briefcase, IndianRupee } from 'lucide-react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 import { DashboardSkeleton } from '../components/Skeleton'
 import api from '../api/axios'
@@ -82,11 +82,16 @@ const Dashboard = () => {
     { name: 'On Hold', value: stats.onHoldProjects },
   ].filter(d => d.value > 0)
 
-  const barData = allProjects.slice(0, 8).map(p => ({
-    name: p.title.length > 14 ? p.title.slice(0, 14) + '…' : p.title,
-    progress: p.progress,
-    fill: p.status === 'completed' ? '#3b82f6' : p.status === 'on-hold' ? '#f59e0b' : '#10b981'
-  }))
+  const statusOrder = { active: 0, 'on-hold': 1, completed: 2 }
+
+  const barData = [...allProjects]
+    .sort((a, b) => (statusOrder[a.status] ?? 3) - (statusOrder[b.status] ?? 3))
+    .slice(0, 8)
+    .map(p => ({
+      name: p.title.length > 14 ? p.title.slice(0, 14) + '…' : p.title,
+      progress: p.progress,
+      fill: p.status === 'completed' ? '#3b82f6' : p.status === 'on-hold' ? '#f59e0b' : '#10b981'
+    }))
 
   if (loading) {
     return (
@@ -125,7 +130,7 @@ const Dashboard = () => {
 
       {/* Category Cards */}
       {stats.totalProjects > 0 && (
-        <div className="grid grid-cols-2 gap-4 animate-slide-up [animation-delay:80ms]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 animate-slide-up [animation-delay:80ms]">
           <div className="card p-5 flex items-center gap-4 border-l-4 border-l-violet-400">
             <div className="w-10 h-10 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 flex-shrink-0">
               <User size={18} />
@@ -142,6 +147,25 @@ const Dashboard = () => {
             <div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Office</p>
               <h3 className="text-2xl font-black text-slate-900 leading-none mt-0.5">{allProjects.filter(p => p.category === 'office').length}</h3>
+            </div>
+          </div>
+          <div className="card p-5 flex items-center gap-4 border-l-4 border-l-emerald-400 col-span-2 md:col-span-1">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <IndianRupee size={18} />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Revenue</p>
+              <h3 className="text-2xl font-black text-slate-900 leading-none mt-0.5">
+                ₹{allProjects
+                  .filter(p => p.category === 'freelance' && p.paymentReceived && p.amount)
+                  .reduce((sum, p) => sum + Number(p.amount), 0)
+                  .toLocaleString('en-IN')}
+              </h3>
+              <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+                {allProjects.filter(p => p.category === 'freelance' && !p.paymentReceived && p.amount > 0).length > 0 &&
+                  `₹${allProjects.filter(p => p.category === 'freelance' && !p.paymentReceived && p.amount > 0).reduce((s, p) => s + Number(p.amount), 0).toLocaleString('en-IN')} pending`
+                }
+              </p>
             </div>
           </div>
         </div>

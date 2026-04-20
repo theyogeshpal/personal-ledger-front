@@ -84,12 +84,14 @@ const Projects = () => {
     } catch { alert('Failed to delete') }
   }
 
+  const statusOrder = { active: 0, 'on-hold': 1, completed: 2 }
+
   const filteredProjects = projects.filter(p =>
     (p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.description?.toLowerCase().includes(search.toLowerCase()) ||
     p.tags?.some(t => t.toLowerCase().includes(search.toLowerCase()))) &&
     (categoryFilter === '' || p.category === categoryFilter)
-  )
+  ).sort((a, b) => (statusOrder[a.status] ?? 3) - (statusOrder[b.status] ?? 3))
 
   const totalPages = Math.ceil(filteredProjects.length / PAGE_SIZE)
   const paginatedProjects = filteredProjects.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)

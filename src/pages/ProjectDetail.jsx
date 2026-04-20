@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronLeft, Edit3, Code, Calendar, CheckCircle2, Globe,
-  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase, Laptop, KeyRound, Eye, EyeOff
+  List, ExternalLink, History, Layout, Activity, ArrowRight, TrendingUp, Tag, User, Briefcase, Laptop, KeyRound, Eye, EyeOff, IndianRupee
 } from 'lucide-react'
 import api from '../api/axios'
 import ProjectForm from '../components/ProjectForm'
@@ -174,6 +174,28 @@ const ProjectDetail = () => {
               </div>
             </div>
           </div>
+
+          {/* Freelance Amount */}
+          {project.category === 'freelance' && project.amount > 0 && (
+            <div className="card p-5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 border border-orange-100 flex-shrink-0">
+                  <IndianRupee size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Project Amount</p>
+                  <p className="text-xl font-black text-slate-900">₹{Number(project.amount).toLocaleString('en-IN')}</p>
+                </div>
+              </div>
+              <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider border ${
+                project.paymentReceived
+                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                  : 'bg-amber-50 text-amber-600 border-amber-100'
+              }`}>
+                {project.paymentReceived ? '✓ Received' : 'Pending'}
+              </span>
+            </div>
+          )}
 
           {/* Timeline */}
           {(project.startDate || project.endDate) && (

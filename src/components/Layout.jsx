@@ -43,6 +43,14 @@ const Layout = ({ children }) => {
             {children}
           </div>
         </main>
+        <footer className="py-3 px-5 md:px-8 lg:px-10 border-t border-slate-100">
+          <p className="text-[11px] text-slate-400 font-medium text-center">
+            Created with ❤️ by{' '}
+            <a href="http://yogesh-pal.netlify.app/" target="_blank" rel="noreferrer" className="font-black text-slate-500 hover:text-blue-600 transition-colors">
+              @yogeshpal
+            </a>
+          </p>
+        </footer>
       </div>
     </div>
   )
