@@ -25,10 +25,10 @@ const Login = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-slate-50 p-5 font-sans">
-      <div className="bg-white p-16 rounded-[40px] w-full max-w-[500px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center">
+    <div className="flex justify-center items-center min-h-screen bg-slate-50  p-5 font-sans">
+      <div className="bg-white p-12 md:p-16 rounded-[40px] w-full max-w-[500px] shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col items-center">
         <div className="text-center mb-12">
-          
+
           <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Welcome Back</h2>
           <p className="text-slate-500 font-medium leading-relaxed">Log in to manage your professional projects and track your progress.</p>
         </div>
@@ -69,9 +69,7 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-12 w-full pt-8 border-t border-slate-50 text-center">
-          <p className="text-slate-400 text-sm font-bold">Need help? <a href="#" className="text-blue-600 hover:underline">Contact Support</a></p>
-        </div>
+
       </div>
     </div>
   )

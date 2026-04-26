@@ -91,7 +91,7 @@ const ProjectDetail = () => {
     <div className="animate-fade-in max-w-[960px] mx-auto pb-10 space-y-6">
       {/* Top Bar */}
       <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 animate-slide-up">
-        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1.5 text-slate-500 font-bold hover:text-slate-900 transition-colors group w-fit text-sm">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-slate-500 font-bold hover:text-slate-900 transition-colors group w-fit text-sm">
           <ChevronLeft size={18} className="transition-transform group-hover:-translate-x-0.5" /> Back
         </button>
         <button onClick={() => setShowEdit(true)} className="btn-ghost w-fit">
