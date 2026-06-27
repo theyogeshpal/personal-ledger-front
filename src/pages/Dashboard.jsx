@@ -30,6 +30,25 @@ const CustomTooltip = ({ active, payload }) => {
   return null
 }
 
+const getPaidAmount = (p) => {
+  if (p.category !== 'freelance') return 0;
+  if (p.installments?.length > 0) {
+    return p.installments.filter(i => i.isPaid).reduce((sum, i) => sum + Number(i.amount || 0), 0);
+  }
+  return p.paymentReceived ? Number(p.amount || 0) : 0;
+};
+
+const getPendingAmount = (p) => {
+  if (p.category !== 'freelance') return 0;
+  if (p.installments?.length > 0) {
+    const paid = getPaidAmount(p);
+    const total = Number(p.amount || 0);
+    if (total > 0) return Math.max(0, total - paid);
+    return p.installments.filter(i => !i.isPaid).reduce((sum, i) => sum + Number(i.amount || 0), 0);
+  }
+  return !p.paymentReceived ? Number(p.amount || 0) : 0;
+};
+
 const Dashboard = () => {
   const navigate = useNavigate()
   const [stats, setStats] = useState({ activeProjects: 0, completedProjects: 0, onHoldProjects: 0, totalProjects: 0 })
@@ -156,14 +175,11 @@ const Dashboard = () => {
             <div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Revenue</p>
               <h3 className="text-2xl font-black text-slate-900 leading-none mt-0.5">
-                ₹{allProjects
-                  .filter(p => p.category === 'freelance' && p.paymentReceived && p.amount)
-                  .reduce((sum, p) => sum + Number(p.amount), 0)
-                  .toLocaleString('en-IN')}
+                ₹{allProjects.reduce((sum, p) => sum + getPaidAmount(p), 0).toLocaleString('en-IN')}
               </h3>
               <p className="text-[10px] text-slate-400 font-bold mt-0.5">
-                {allProjects.filter(p => p.category === 'freelance' && !p.paymentReceived && p.amount > 0).length > 0 &&
-                  `₹${allProjects.filter(p => p.category === 'freelance' && !p.paymentReceived && p.amount > 0).reduce((s, p) => s + Number(p.amount), 0).toLocaleString('en-IN')} pending`
+                {allProjects.reduce((sum, p) => sum + getPendingAmount(p), 0) > 0 &&
+                  `₹${allProjects.reduce((sum, p) => sum + getPendingAmount(p), 0).toLocaleString('en-IN')} pending`
                 }
               </p>
             </div>
