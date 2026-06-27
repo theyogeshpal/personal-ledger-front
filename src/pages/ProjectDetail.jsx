@@ -175,25 +175,64 @@ const ProjectDetail = () => {
             </div>
           </div>
 
-          {/* Freelance Amount */}
-          {project.category === 'freelance' && project.amount > 0 && (
-            <div className="card p-5 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 border border-orange-100 flex-shrink-0">
-                  <IndianRupee size={18} />
+          {/* Freelance Amount & Installments */}
+          {project.category === 'freelance' && (project.amount > 0 || (project.installments && project.installments.length > 0)) && (
+            <div className="card p-5 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 border border-orange-100 flex-shrink-0">
+                    <IndianRupee size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Project Amount</p>
+                    <p className="text-xl font-black text-slate-900">₹{Number(project.amount || 0).toLocaleString('en-IN')}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Project Amount</p>
-                  <p className="text-xl font-black text-slate-900">₹{Number(project.amount).toLocaleString('en-IN')}</p>
-                </div>
+                {(!project.installments || project.installments.length === 0) && (
+                  <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider border ${
+                    project.paymentReceived
+                      ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                      : 'bg-amber-50 text-amber-600 border-amber-100'
+                  }`}>
+                    {project.paymentReceived ? '✓ Received' : 'Pending'}
+                  </span>
+                )}
+                {(project.installments && project.installments.length > 0) && (() => {
+                  const paid = project.installments.filter(i => i.isPaid).reduce((sum, i) => sum + i.amount, 0);
+                  const fullyPaid = paid >= project.amount && project.amount > 0;
+                  return (
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Received</p>
+                      <p className={`text-lg font-black ${fullyPaid ? 'text-emerald-500' : 'text-amber-500'}`}>₹{paid.toLocaleString('en-IN')}</p>
+                    </div>
+                  );
+                })()}
               </div>
-              <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider border ${
-                project.paymentReceived
-                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                  : 'bg-amber-50 text-amber-600 border-amber-100'
-              }`}>
-                {project.paymentReceived ? '✓ Received' : 'Pending'}
-              </span>
+              
+              {/* Installments List */}
+              {project.installments && project.installments.length > 0 && (
+                <div className="mt-2 pt-4 border-t border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <List size={12} className="text-orange-400" /> Installments
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {project.installments.map((inst, i) => (
+                      <div key={i} className={`p-3 rounded-xl border flex flex-col gap-1 ${inst.isPaid ? 'bg-emerald-50/50 border-emerald-100' : 'bg-slate-50 border-slate-200'}`}>
+                        <div className="flex justify-between items-start">
+                          <span className="text-sm font-black text-slate-700">₹{Number(inst.amount).toLocaleString('en-IN')}</span>
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${inst.isPaid ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-500'}`}>
+                            {inst.isPaid ? 'Paid' : 'Pending'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mt-1">
+                          <span className="text-xs font-bold text-slate-500 truncate pr-2">{inst.note || 'No note'}</span>
+                          {inst.date && <span className="text-[10px] font-bold text-slate-400 whitespace-nowrap">{new Date(inst.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

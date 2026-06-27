@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop, KeyRound, DollarSign } from 'lucide-react'
+import { Save, X, Code, Tag, AlignLeft, Calendar, User, Briefcase, Plus, Trash2, Globe, Laptop, KeyRound, DollarSign, List } from 'lucide-react'
 
 const empty = {
   title: '', description: '', category: 'personal', status: 'active', progress: 0,
@@ -8,6 +8,7 @@ const empty = {
   credentials: [],
   amount: 0,
   paymentReceived: false,
+  installments: [],
   tags: '', startDate: '', endDate: ''
 }
 
@@ -32,6 +33,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
         credentials: initial.credentials || [],
         amount: initial.amount || 0,
         paymentReceived: initial.paymentReceived || false,
+        installments: initial.installments || [],
       })
     } else {
       setForm(empty)
@@ -52,6 +54,10 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
   const addCred = () => set('credentials', [...form.credentials, { label: '', username: '', password: '' }])
   const removeCred = (i) => set('credentials', form.credentials.filter((_, idx) => idx !== i))
 
+  const setInstallment = (i, key, val) => set('installments', form.installments.map((inst, idx) => idx === i ? { ...inst, [key]: val } : inst))
+  const addInstallment = () => set('installments', [...form.installments, { amount: 0, date: '', isPaid: false, note: '' }])
+  const removeInstallment = (i) => set('installments', form.installments.filter((_, idx) => idx !== i))
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit({
@@ -60,6 +66,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
       repos: form.repos.filter(r => r.url.trim()),
       liveLinks: form.liveLinks.filter(l => l.url.trim()),
       credentials: form.credentials.filter(c => c.username.trim() || c.password.trim()),
+      installments: form.installments.map(inst => ({ ...inst, amount: Number(inst.amount) || 0 })),
     })
   }
 
@@ -142,7 +149,7 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
             <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg">
               <div>
                 <p className="text-sm font-black text-slate-700">Payment Received</p>
-                <p className="text-xs text-slate-400">Toggle when payment is received</p>
+                <p className="text-xs text-slate-400">Toggle when payment is received (if not using installments)</p>
               </div>
               <button
                 type="button"
@@ -155,6 +162,50 @@ const ProjectForm = ({ initial, onSubmit, onCancel }) => {
                   form.paymentReceived ? 'left-7' : 'left-1'
                 }`} />
               </button>
+            </div>
+            {/* Installments Section */}
+            <div className="mt-2 pt-3 border-t border-orange-100/50">
+              <div className="flex items-center justify-between mb-3">
+                <label className={`${labelClass} text-orange-500 mb-0`}><List size={12} /> Installments</label>
+                <button type="button" onClick={addInstallment} className="flex items-center gap-1 text-[11px] font-black text-orange-600 hover:text-orange-800 bg-orange-100 hover:bg-orange-200 px-2.5 py-1 rounded-lg transition-all">
+                  <Plus size={12} /> Add Installment
+                </button>
+              </div>
+              
+              {form.installments.length === 0 ? (
+                <p className="text-xs text-orange-400/70 font-medium italic">No installments added. Click Add to track payments in parts.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {form.installments.map((inst, i) => (
+                    <div key={i} className="flex flex-col gap-2 p-3 bg-white border border-orange-100 rounded-lg">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1 grid grid-cols-2 gap-2">
+                          <input type="number" min="0" value={inst.amount || ''} onChange={e => setInstallment(i, 'amount', e.target.value)} placeholder="Amount (₹)" className={inputClass} />
+                          <input type="date" value={inst.date ? new Date(inst.date).toISOString().split('T')[0] : ''} onChange={e => setInstallment(i, 'date', e.target.value)} className={inputClass} />
+                        </div>
+                        <button type="button" onClick={() => removeInstallment(i)} className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all flex-shrink-0">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input value={inst.note} onChange={e => setInstallment(i, 'note', e.target.value)} placeholder="Note (e.g. Advance, Final)" className={`${inputClass} flex-1`} />
+                        <button
+                          type="button"
+                          onClick={() => setInstallment(i, 'isPaid', !inst.isPaid)}
+                          className={`relative w-12 h-6 rounded-full transition-all duration-200 flex-shrink-0 ${
+                            inst.isPaid ? 'bg-emerald-500' : 'bg-slate-200'
+                          }`}
+                        >
+                          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all duration-200 ${
+                            inst.isPaid ? 'left-7' : 'left-1'
+                          }`} />
+                        </button>
+                        <span className="text-[10px] font-bold text-slate-400 w-8">{inst.isPaid ? 'Paid' : 'Unpaid'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
